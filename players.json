@@ -1,0 +1,90 @@
+{
+  "players": [
+    {
+      "playerid": "576031405037977600",
+      "lasthourly": 1599493342515,
+      "lastdaily": 1599493349475,
+      "lastweekly": 1599493351999
+    },
+    {
+      "playerid": "306512867232972802",
+      "lasthourly": 1597948607510,
+      "lastdaily": 1597948593393,
+      "lastweekly": 1597948617660
+    },
+    {
+      "playerid": "351164483256975360",
+      "lasthourly": 1600875887512,
+      "lastdaily": 1600875887896,
+      "lastweekly": 1600875889544
+    },
+    {
+      "playerid": "720352012402688000",
+      "lasthourly": 1596424135633,
+      "lastdaily": 0,
+      "lastweekly": 0
+    },
+    {
+      "playerid": "426021685511061505",
+      "lasthourly": 1596896649984,
+      "lastdaily": 1596896652042,
+      "lastweekly": 1596466383391
+    },
+    {
+      "playerid": "432626333605036042",
+      "lasthourly": 0,
+      "lastdaily": 0,
+      "lastweekly": 0
+    },
+    {
+      "playerid": "518232676411637780",
+      "lasthourly": 0,
+      "lastdaily": 0,
+      "lastweekly": 0
+    },
+    {
+      "playerid": "645728830744690718",
+      "lasthourly": 1597045482427,
+      "lastdaily": 0,
+      "lastweekly": 0
+    },
+    {
+      "playerid": "688127264705347592",
+      "lasthourly": 1596934018915,
+      "lastdaily": 1596934028297,
+      "lastweekly": 1596667903982
+    },
+    {
+      "playerid": "515367095710646272",
+      "lasthourly": 1597944164921,
+      "lastdaily": 1597944161099,
+      "lastweekly": 1597791895561
+    },
+    {
+      "playerid": "720352542868897830",
+      "lastwork": 0,
+      "lastdaily": 0,
+      "lastweekly": 0
+    },
+    {
+      "playerid": "520799268114530314",
+      "lastwork": 0,
+      "lastdaily": 0,
+      "lastweekly": 0
+    },
+    {
+      "playerid": "663480534046998538",
+      "lastwork": 0,
+      "lastdaily": 1601478912251,
+      "lastweekly": 1601478942375,
+      "lasthourly": 1601478925338
+    },
+    {
+      "playerid": "463342925565132800",
+      "lastwork": 0,
+      "lastdaily": 1601478855753,
+      "lastweekly": 1601478850892,
+      "lasthourly": 1601478853344
+    }
+  ]
+}
