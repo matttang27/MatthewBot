@@ -21,7 +21,7 @@ module.exports = {
 			message.client.users.cache.get(message.author.id).send(args.join(' '));
 		}
 		
-		console.log(`controlled by ${message.author.username} in ${message.channel.type}`)
+		console.log(`controlled by ${message.author.username} in ${message.channel.name} in ${message.guild.name}`)
 	
 	},
 }

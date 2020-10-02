@@ -28,8 +28,13 @@ function minutesToMessage(minutes) {
 }
 
 function findMember(message,args) {
+	if (args.length >= 1 && message.channel.type == "dm")  {
+		message.reply("You can only search for others inside a guild!")
+		return false
+	}
+
 	if (message.mentions.members.first()) {
-		return message.mentions.members.first();
+		return message.mentions.members.first().id;
 	}
 	else {
 		var finder = args.join(" ").toLowerCase()
@@ -46,6 +51,40 @@ function findMember(message,args) {
 					}
 				}
 			})
+			if (users.length == 0) {
+				message.reply("I can't find anyone with that username")
+				return false
+			}
+			else if (users.length == 1) {
+				var user = users[0]
+				return user.id
+			}
+			else {
+				var send = []
+				const filter = m => m.author.id == message.author.id && Math.floor(m.content) >= 0 && Math.floor(m.content) < users.length
+
+				const collector = message.channel.createMessageCollector(filter, { max: 1, time: 15000 });
+				for (i=0;i<users.length;i++) {
+					send.push(`${i} - ${users[i].username}`)
+				}
+				message.reply(`There are too many possibilities :dizzy_face: here's who you can choose! \n` + send.join("\n"))
+				collector.on('collect', async m => {
+					
+					return users[parseInt(m)].id
+					
+					
+					
+				});
+
+				collector.on('end', collected => {
+					if (!collector.endReason()) {
+						message.channel.send("Cancelled command.")
+						return false
+					}
+					
+				})
+			}
 	}
-}
-module.exports = minutesToMessage;
+};
+exports.minutesToMessage = minutesToMessage
+exports.findMember = findMember
