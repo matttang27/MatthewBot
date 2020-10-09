@@ -13,6 +13,8 @@ const queue = new Map();
 var games = []
 
 
+var praise = ["nice","good","amazing","godly","legend"]
+
 var chat = new Map();
 
 function cleanup(str) {
@@ -114,6 +116,7 @@ function converter(input,rule,output) {
 
 bot.on("ready", () => {
   console.log("Bot Ready!");
+  changeStatus()
 });
 
 bot.on("message", async message => {
@@ -161,7 +164,18 @@ bot.on("message", async message => {
 		if (temp.length == 1 && temp.includes("e")) {
 			return message.channel.send("No more.")
 		}
-		
+		if (message.author.id == ownerID) {
+			
+			temp = temp.split(" ")
+			if (!(temp.includes("matthew") || temp.includes("matthewbot"))) {
+				return
+			}
+			for (i=0;i<temp.length;i++) {
+				if (praise.includes(temp[i])) {
+					return message.channel.send("https://cdn.discordapp.com/attachments/720351714791915523/764105109536768020/unknown.png")
+				}
+			}
+		}
 		if (temp.includes("abdullah")) {
 			if (!temp.includes("supreme") || !temp.includes("leader")) {
 				message.channel.send("You must refer to him as Supreme Leader Abdullah!")
@@ -400,6 +414,6 @@ function changeStatus() {
 
 	}, 10000)
 }
-changeStatus()
+
 
 
