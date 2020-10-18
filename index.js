@@ -162,7 +162,9 @@ bot.on("message", async message => {
 
 		}
 		if (temp.length == 1 && temp.includes("e")) {
-			return message.channel.send("No more.")
+			var sended = await message.channel.send("E")
+			await sleep(1000)
+			return sended.edit("You thought");
 		}
 		if (message.author.id == ownerID) {
 			
@@ -415,5 +417,9 @@ function changeStatus() {
 	}, 10000)
 }
 
-
+function sleep(ms) {
+	return new Promise((resolve) => {
+	  setTimeout(resolve, ms);
+	});
+}   
 
