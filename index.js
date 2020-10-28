@@ -128,6 +128,19 @@ bot.on("message", async message => {
 	if (message.author.bot) {
 		return
 	};
+	if (message.guild.id == "757770623450611784" && message.channel.id != "757977875059179602") {
+		var c = message.content
+		console.log(c)
+		if (c == "$wa" || c == "$wg" || c == "$ha" || c == "$hg" || c == "$ma" || c == "$mg") {
+			message.delete()
+			message.channel.send("Rolling waifus are only allowed in the <#757977875059179602> channel!")
+			message.member.roles.add(message.guild.roles.cache.find(r => r.name == "Muted"));
+			return setTimeout(function() {message.member.roles.remove(message.guild.roles.cache.find(r => r.name == "Muted"))}, 10000)
+					
+		}
+	}
+
+
 	if (message.author.id == "518232676411637780") {
 		message.react("730499606915579954")
 	}
@@ -156,9 +169,6 @@ bot.on("message", async message => {
 					return
 				}
 			}
-
-			
-
 
 		}
 		if (temp.length == 1 && temp.includes("e")) {
