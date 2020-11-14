@@ -1,6 +1,8 @@
 const { prefix, token } = require("../config.json");
 const fs = require('fs');
 const Discord = require('discord.js');
+const natural = require('natural');
+const wordnet = new natural.WordNet();
 
 module.exports = {
 	args: [-1],
@@ -13,6 +15,15 @@ module.exports = {
 		var bot = other[1]
 		var commandName = other[2]
 
+		wordnet.lookup(args[0], function(details) {
+			console.log(details);
+			if (details.length > 0) {
+				message.channel.send("That is a word!");
+			}
+			else {
+				message.chanenl.send("That is not a word!");
+			}
+		})
 		
 
 		

@@ -80,6 +80,7 @@ var outputs = [
 	
 	["Did someone say ~~jim~~ **MATTHEW BOT?**"],
 	
+	
 	["True, that is kinda weirdchamp.","https://tenor.com/view/weirdchamping-weirdchamp-twitch-meme-ryan-gutierrez-gif-17202815"]
 ]
 
@@ -128,17 +129,41 @@ bot.on("message", async message => {
 	if (message.author.bot) {
 		return
 	};
-	if (message.guild.id == "757770623450611784" && message.channel.id != "757977875059179602") {
-		var c = message.content
-		console.log(c)
-		if (c == "$wa" || c == "$wg" || c == "$ha" || c == "$hg" || c == "$ma" || c == "$mg") {
-			message.delete()
-			message.channel.send("Rolling waifus are only allowed in the <#757977875059179602> channel!")
-			message.member.roles.add(message.guild.roles.cache.find(r => r.name == "Muted"));
-			return setTimeout(function() {message.member.roles.remove(message.guild.roles.cache.find(r => r.name == "Muted"))}, 10000)
-					
+
+	if (message.guild.id =="757770623450611784") {
+		if (message.channel.id != "757977875059179602") {
+			var c = message.content
+			if (c == "$wa" || c == "$wg" || c == "$ha" || c == "$hg" || c == "$ma" || c == "$mg") {
+				message.delete()
+				message.channel.send("Rolling waifus are only allowed in the <#757977875059179602> channel!")
+				message.member.roles.add(message.guild.roles.cache.find(r => r.name == "Muted"));
+				return setTimeout(function() {message.member.roles.remove(message.guild.roles.cache.find(r => r.name == "Muted"))}, 10000)
+						
+			}
+		};
+		var clean = message.content.replace(/\W/g, '').toLowerCase();
+		if (clean == "imadegeneratetoo") {
+			var act = message.guild.roles.cache.find(r => r.name == "Human Rights Activist");
+			if (message.member.roles.cache.has("776509222145228870")) {
+				message.channel.send(`${message.author.username} is now a degenerate!`);
+				return message.member.roles.remove(act);
+			}
+			else {
+				message.channel.send(`${message.author.username} is a degenerate.`)
+			}
 		}
-	}
+		if (clean == "yallarefuckingdegenerates") {
+			var act = message.guild.roles.cache.find(r => r.name == "Human Rights Activist");
+			if (message.member.roles.cache.has("776509222145228870")) {
+				message.channel.send(`We know`);
+				return message.member.roles.remove(act);
+			}
+			else {
+				message.channel.send(`${message.author.username} is now a <@&776509222145228870>!`)
+				return message.member.roles.add(act);
+			}
+		}
+	};
 
 
 	if (message.author.id == "518232676411637780") {

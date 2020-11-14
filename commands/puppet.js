@@ -1,4 +1,4 @@
-const { prefix, token } = require("../config.json");
+const { prefix, token, ownerID} = require("../config.json");
 
 module.exports = {
 	args: [-1],
@@ -10,6 +10,12 @@ module.exports = {
 	perms: 4,
 	
 	execute(message, args, other) {
+		if (message.author.id != ownerID) {
+			if (!message.member.user.roles.cache.get("774488793364299786")) {
+				return;
+			}
+		}
+		
 		if (args.length == 0) {
 			return message.reply("You need a message!")
 		}
