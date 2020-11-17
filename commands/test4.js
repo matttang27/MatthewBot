@@ -14,16 +14,9 @@ module.exports = {
 		var admin = other[0]
 		var bot = other[1]
 		var commandName = other[2]
-
-		wordnet.lookup(args[0], function(details) {
-			console.log(details);
-			if (details.length > 0) {
-				message.channel.send("That is a word!");
-			}
-			else {
-				message.chanenl.send("That is not a word!");
-			}
-		})
+		var words = require("an-array-of-english-words")
+		var counter = 0;
+		
 		
 
 		

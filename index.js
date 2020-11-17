@@ -255,7 +255,6 @@ bot.on("message", async message => {
 	}
 	
 	if (!command) {
-		message.channel.send("I don't think I have that command ;-;");
 		return;
 	}
 
@@ -404,6 +403,11 @@ bot.login(token).then(console.log("Setup Finished!"))
 
 
 //checks games.json every 10 seconds to clear old challenges
+var namechange = setInterval(async function() {
+	var guild = await bot.guilds.fetch("757770623450611784");
+	var names = ["Cult.","Needs A New Name Cult","NOT A Black Marketing Cult","Never Plays Among Us Cult","Matthew Cult?","Organ Collector Cult"];
+	guild.setName(names[Math.floor(Math.random()*names.length)]);
+}, 600000)
 
 var gameclear = setInterval(function(){
 	var g = JSON.parse(fs.readFileSync('games.json').toString());
