@@ -131,7 +131,7 @@ bot.on("message", async message => {
 	};
 
 	if (message.guild.id =="757770623450611784") {
-		if (message.channel.id != "757977875059179602") {
+		if (message.channel.id != "757977875059179602" && message.channel.id != "778686664842805288") {
 			var c = message.content
 			if (c == "$wa" || c == "$wg" || c == "$ha" || c == "$hg" || c == "$ma" || c == "$mg") {
 				message.delete()

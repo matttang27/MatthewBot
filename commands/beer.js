@@ -4,9 +4,9 @@ const Discord = require('discord.js');
 
 module.exports = {
 	args: [-1],
-	name: "coffee",
-	description: "Coffee Game! Enter a word containing the two letters at the correct spaces",
-	usage: `${prefix}coffee {opt. settings}`,
+	name: "beer",
+	description: "Beer Game! Enter a word containing all the letters in any order.",
+	usage: `${prefix}beer {opt. settings}`,
 	perms: 4,
 	async execute(message, args, other) {
 		var admin = other[0]
@@ -18,8 +18,8 @@ module.exports = {
 		var diff = 50;
 		var goal = 100;
 		var embed = new Discord.MessageEmbed()
-		.setTitle("☕ A new Coffee is being brewed! Starting in 10 seconds. ☕")
-		.setDescription(`Enter a word containing the two letters at the correct spaces.\nPoints System: \n\n1st - 10pts\n2nd - 5pts\n3rd - 3pts\n4th - 2pts\n5th - 1 pt.\n\nThe points are multiplied by the difficulty, which is the number of spaces between the two letters. e.g a word that needs e at 1st and 3rd gets 2x more points as problem that needs er beside each other.\n\n**Current settings:**\n**m@time** : The amount of time in seconds to answer the question(5-30). \n(Current: 15)\n**m@difficulty** : The amount of possible answers that is required(1-250)\n(Current: 50)\n**m@goal** : the number of points to get (10-1000)\n(Current: 100)\n\nEnd the game with **m@end**`)
+		.setTitle("🍺 The beer is being brewed. Starting in 10 seconds. 🍺")
+		.setDescription(`Enter any word containing all five letters in any order\nPoints System: \n\n1st - 10pts\n2nd - 5pts\n3rd - 3pts\n4th - 2pts\n5th - 1 pt.\n\n**Current settings:**\n**m@time** : The amount of time in seconds to answer the question(5-30). \n(Current: 15)\n**m@difficulty** : The amount of possible answers that is required(1-250)\n(Current: 50)\n**m@goal** : the number of points to get (10-1000)\n(Current: 100)\n\nEnd the game with **m@end**`)
 		.setColor("#6f4e37")
 
 		var reactor = await message.channel.send(embed)
@@ -27,7 +27,7 @@ module.exports = {
 		//countdown from 5
 		var countdown = setTimeout(() => {
 			var counter = 0;
-			var reactions = ["5️⃣","4️⃣","3️⃣","2️⃣","1️⃣","☕"]
+			var reactions = ["5️⃣","4️⃣","3️⃣","2️⃣","1️⃣","🍺"]
 			var stop = setInterval(() => {
 				reactor.react(reactions[counter])
 				counter++;
@@ -79,46 +79,56 @@ module.exports = {
 
 		collector.on('end', async collected => {
 			embed = new Discord.MessageEmbed()
-			.setTitle("☕ The Coffee has finished Brewing! ☕")
-			.setDescription(`Who will claim the coffee?\n\n**Time**: ${time} seconds\n**Difficulty**: ${diff} Minimum Solutions\n**Goal**: ${goal} pts`)
+			.setTitle("🍺 The beer has finished Brewing! 🍺")
+			.setDescription(`Who will claim the beer?\n\n**Time**: ${time} seconds\n**Difficulty**: ${diff} Minimum Solutions\n**Goal**: ${goal} pts`)
 			.setColor("#6f4e37")
 			await message.channel.send(embed)
 			
 			var lb = {}
-			coffee(time,diff,goal,lb,0);
+			beer(time,diff,goal,lb,0);
 		});
 
 
 		
-		async function coffee (time,diff,goal,lb,active) {
+		async function beer (time,diff,goal,lb,active) {
 			if (active == 8) {
-				return message.channel.send("I guess this coffee is for me then ~~you dumb f*cks~~")
+				return message.channel.send("I guess this beer is for me then ~~you dumb f*cks~~")
 			}
-			var letter1, letter2, number1, number2;
 			var solutions = 0;
 			while (true) {
 				//two random letters
-				letter1 = String.fromCharCode(Math.floor(Math.random() * 26) + 97)
-				letter2 = String.fromCharCode(Math.floor(Math.random() * 26) + 97)
-				number1 = Math.floor(Math.random()*4);
-				number2 = Math.floor(Math.random()*3) + number1 + 1
+				letters = []
+				letters[0] = String.fromCharCode(Math.floor(Math.random() * 26) + 97)
+				letters[1] = String.fromCharCode(Math.floor(Math.random() * 26) + 97)
+				letters[2] = String.fromCharCode(Math.floor(Math.random() * 26) + 97)
+				letters[3] = String.fromCharCode(Math.floor(Math.random() * 26) + 97)
 				
-				place = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th"]
+				
+				
+				console.log(letters[0] + letters[1] + letters[2] + letters[3])
 				
 				words.forEach(w => {
-					if (w[number1] == letter1 && w[number2] == letter2) {
+					o = w
+
+					for (i=0;i<letters.length;i++) {
+						w = w.replace(letters[i],"")
+					}
+					//if not all 4 letters were replaced
+					if (w.length + letters.length == o.length) {
 						solutions++
 					}
 				})
+				console.log(solutions);
 				if (solutions >= diff) {
 					break;
 				}
 			}
+			var place = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th"]
 			//checks if word is viable
-			var reactor = await message.channel.send(`Enter a word with the **${place[number1]}** letter being **${letter1}** and the **${place[number2]}** letter being **${letter2}**`)
+			var reactor = await message.channel.send(`Enter a word containing **${letters[0] + letters[1] + letters[2] + letters[3]}**`)
 			var countdown = setTimeout(() => {
 				var counter = 0;
-				var reactions = ["5️⃣","4️⃣","3️⃣","2️⃣","1️⃣","☕"]
+				var reactions = ["5️⃣","4️⃣","3️⃣","2️⃣","1️⃣","🍺"]
 				var stop = setInterval(() => {
 					reactor.react(reactions[counter])
 					counter++;
@@ -129,7 +139,11 @@ module.exports = {
 			},time*1000 - 6000)
 			const filter = m => {
 				m.content = m.content.toLowerCase()
-				return (m.content.charAt(number1) == letter1 && m.content.charAt(number2) == letter2 && words.includes(m.content) && !used.includes(m.content) && !Object.keys(lb).includes(m.author.id)) || m.content == ("m@end")
+				n = m.content
+				for (i=0;i<letters.length;i++) {
+					n = n.replace(letters[i],"")
+				}
+				return (n.length + letters.length == m.content.length && words.includes(m.content) && !used.includes(m.content) &&!Object.keys(lb).includes(m.author.id)) || m.content == ("m@end") 
 			}
 			var reply = []
 			var used = []
@@ -140,14 +154,14 @@ module.exports = {
 			
 			collector.on('collect', async m => {
 				if (m.content == "m@end") {
-					return message.channel.send("Giving up already? The Coffee's still hot.")
+					return message.channel.send("Giving up already? I guess I get the beer then.")
 				}
 				m.content = m.content.toLowerCase();
 				if (m.author.id in lb) {
-					lb[m.author.id] += points[reply.length] * (number2 - number1);
+					lb[m.author.id] += points[reply.length];
 				}
 				else {
-					lb[m.author.id] = points[reply.length] * (number2 - number1);
+					lb[m.author.id] = points[reply.length];
 				}
 				await m.react(reacts[reply.length]);
 				reply.push(m);
@@ -158,21 +172,22 @@ module.exports = {
 				word = ""
 				if (reply.length == 0) {
 					for (i=0;i<words.length;i++) {
-						if (words[i].charAt(number1) == letter1 && words[i].charAt(number2) == letter2) {
+						n = words[i]
+						for (j=0;j<letters.length;j++) {
+							n = n.replace(letters[j],"")
+						}
+						if (n.length + letters.length == words[i].length) {
 							word = words[i]
 							break;
 						}
 					}
 					message.channel.send(`Looks like no one got this one. One answer was: ${word}, but there were ${solutions} solutions!`)
-					coffee(time,diff,goal,lb,++active)
+					beer(time,diff,goal,lb,++active)
 					return;
 				}
 				print = ""
 				for (i=0;i<reply.length;i++) {
-					print += `\n${reacts[i]} - ${reply[i].author.username} - ${lb[reply[i].author.id] - points[i] * (number2 - number1)} -> **${lb[reply[i].author.id]}**`
-					if (number2 - number1 > 1) {
-						print += ` **x${number2 - number1}**`
-					}
+					print += `\n${reacts[i]} - ${reply[i].author.username} - ${lb[reply[i].author.id] - points[i]} -> **${lb[reply[i].author.id]}**`
 				}
 				message.channel.send(print);
 				for (player in lb) {
@@ -189,7 +204,7 @@ module.exports = {
 						return;
 					}
 					else {
-						coffee(time,diff,goal,lb,active)
+						beer(time,diff,goal,lb,active)
 						return;
 					}
 				}
