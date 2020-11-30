@@ -10,7 +10,9 @@ module.exports = {
 	perms: 4,
 	
 	execute(message, args, other) {
-		message.channel.send(args.join(' '))
+		message.channel.send(args.join(' ')).catch(() => {
+				message.channel.send("Message cannot be empty.")
+			})
 	
 	},
 }

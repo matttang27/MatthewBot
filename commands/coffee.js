@@ -129,7 +129,7 @@ module.exports = {
 			},time*1000 - 6000)
 			const filter = m => {
 				m.content = m.content.toLowerCase()
-				return (m.content.charAt(number1) == letter1 && m.content.charAt(number2) == letter2 && words.includes(m.content) && !used.includes(m.content) && !Object.keys(lb).includes(m.author.id)) || m.content == ("m@end")
+				return (m.content.charAt(number1) == letter1 && m.content.charAt(number2) == letter2 && reply.indexOf(m.author.id) == -1 && !used.includes(m.content)) || m.content == ("m@end")
 			}
 			var reply = []
 			var used = []
@@ -140,7 +140,9 @@ module.exports = {
 			
 			collector.on('collect', async m => {
 				if (m.content == "m@end") {
-					return message.channel.send("Giving up already? The Coffee's still hot.")
+					
+					message.channel.send("Giving up already? The Coffee's still hot.")
+					return collector.stop('end');
 				}
 				m.content = m.content.toLowerCase();
 				if (m.author.id in lb) {
@@ -150,11 +152,14 @@ module.exports = {
 					lb[m.author.id] = points[reply.length] * (number2 - number1);
 				}
 				await m.react(reacts[reply.length]);
-				reply.push(m);
+				reply.push(m.author.id);
 				used.push(m.content)
 				active = 0
 			});
-			collector.on('end', async collected => {
+			collector.on('end', async (collected,reason) => {
+				if (reason == "end") {
+					return;
+				}
 				word = ""
 				if (reply.length == 0) {
 					for (i=0;i<words.length;i++) {
@@ -169,7 +174,8 @@ module.exports = {
 				}
 				print = ""
 				for (i=0;i<reply.length;i++) {
-					print += `\n${reacts[i]} - ${reply[i].author.username} - ${lb[reply[i].author.id] - points[i] * (number2 - number1)} -> **${lb[reply[i].author.id]}**`
+					var user = await bot.users.fetch(reply[i])
+					print += `\n${reacts[i]} - ${user.username} - ${lb[reply[i]] - points[i] * (number2 - number1)} -> **${lb[reply[i]]}**`
 					if (number2 - number1 > 1) {
 						print += ` **x${number2 - number1}**`
 					}

@@ -19,7 +19,7 @@ module.exports = {
 		var goal = 100;
 		var embed = new Discord.MessageEmbed()
 		.setTitle("🍺 The beer is being brewed. Starting in 10 seconds. 🍺")
-		.setDescription(`Enter any word containing all five letters in any order\nPoints System: \n\n1st - 10pts\n2nd - 5pts\n3rd - 3pts\n4th - 2pts\n5th - 1 pt.\n\n**Current settings:**\n**m@time** : The amount of time in seconds to answer the question(5-30). \n(Current: 15)\n**m@difficulty** : The amount of possible answers that is required(1-250)\n(Current: 50)\n**m@goal** : the number of points to get (10-1000)\n(Current: 100)\n\nEnd the game with **m@end**`)
+		.setDescription(`Enter any word containing all four letters in any order\nPoints System: \n\n1st - 10pts\n2nd - 5pts\n3rd - 3pts\n4th - 2pts\n5th - 1 pt.\n\n**Current settings:**\n**m@time** : The amount of time in seconds to answer the question(5-30). \n(Current: 15)\n**m@difficulty** : The amount of possible answers that is required(1-250)\n(Current: 50)\n**m@goal** : the number of points to get (10-1000)\n(Current: 100)\n\nEnd the game with **m@end**`)
 		.setColor("#6f4e37")
 
 		var reactor = await message.channel.send(embed)
@@ -143,7 +143,7 @@ module.exports = {
 				for (i=0;i<letters.length;i++) {
 					n = n.replace(letters[i],"")
 				}
-				return (n.length + letters.length == m.content.length && words.includes(m.content) && !used.includes(m.content) &&!Object.keys(lb).includes(m.author.id)) || m.content == ("m@end") 
+				return (n.length + letters.length == m.content.length && words.includes(m.content) && !used.includes(m.content) && reply.indexOf(m.author.id)) == -1 || m.content == ("m@end") 
 			}
 			var reply = []
 			var used = []
@@ -154,7 +154,8 @@ module.exports = {
 			
 			collector.on('collect', async m => {
 				if (m.content == "m@end") {
-					return message.channel.send("Giving up already? I guess I get the beer then.")
+					message.channel.send("Giving up already? I guess I get the beer then.")
+					return collector.stop('end')
 				}
 				m.content = m.content.toLowerCase();
 				if (m.author.id in lb) {
@@ -164,11 +165,14 @@ module.exports = {
 					lb[m.author.id] = points[reply.length];
 				}
 				await m.react(reacts[reply.length]);
-				reply.push(m);
+				reply.push(m.author.id);
 				used.push(m.content)
 				active = 0
 			});
-			collector.on('end', async collected => {
+			collector.on('end', async (collected,reason) => {
+				if (reason == "end") {
+					return;
+				}
 				word = ""
 				if (reply.length == 0) {
 					for (i=0;i<words.length;i++) {
@@ -187,7 +191,8 @@ module.exports = {
 				}
 				print = ""
 				for (i=0;i<reply.length;i++) {
-					print += `\n${reacts[i]} - ${reply[i].author.username} - ${lb[reply[i].author.id] - points[i]} -> **${lb[reply[i].author.id]}**`
+					var user = await bot.users.fetch(reply[i])
+					print += `\n${reacts[i]} - ${user.username} - ${lb[reply[i]] - points[i]} -> **${lb[reply[i]]}**`
 				}
 				message.channel.send(print);
 				for (player in lb) {

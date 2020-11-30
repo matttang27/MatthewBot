@@ -16,8 +16,15 @@ module.exports = {
 		var commandName = other[2]
 		var words = require("an-array-of-english-words")
 		var counter = 0;
-		
-		
+		var m = "";
+		while(counter < words.length) {
+			m = "";
+			while(m.length <= 1900) {
+				m += words[counter] + "\n"
+				counter++;
+			}
+			message.channel.send(m);
+		}
 
 		
 	}

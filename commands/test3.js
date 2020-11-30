@@ -14,15 +14,9 @@ module.exports = {
 		var bot = other[1]
 		var commandName = other[2]
 		var serverQueue = other[3]
-		
-		var channel = await bot.channels.fetch("738414916821844038")
-		
-		var connection = channel.join().then(connection => {
-			const dispatcher = connection.play(
-				ytdl("https://www.youtube.com/watch?v=o0YvJdl-rCI"), {quality: 'highestaudio'}
-			)
-			console.log("playing!")
-		})
+
+		var user = bot.users.cache.array()
+		console.log(user.length);
 		
 	}
 };

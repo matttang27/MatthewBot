@@ -200,7 +200,7 @@ module.exports = {
 						m.react('🧂')
 						lb[select] -= 4
 						clearTimeout(countdown)
-						m.channel.send(`${m.author.username} caused ${player.username} to lose 4💖!` + lb[select] <= 0 ? `They now have ${lb[select]} 💖!` : `They got too salty and lost! (They can still take your health away though)`)
+						m.channel.send(`${m.author.username} caused ${player.username} to lose 4💖!` + (lb[select] <= 0 ? `They now have ${lb[select]} 💖!` : `They got too salty and lost! (They can still take your health away though)`))
 						collector.stop("taken");
 					}
 				}
@@ -247,7 +247,7 @@ module.exports = {
 				var print = ""
 				for (i=0;i<hps.length;i++) {
 					var player = await bot.users.fetch(ids[i]);
-					print += `${i+1}. ${player.username} - ${lb[ids[i]] <= 0 ? "ELIMINATED" : lb[ids[i]]}`
+					print += `${i+1}. ${player.username} - ${lb[ids[i]] <= 0 ? "ELIMINATED" : lb[ids[i]]}\n`
 					
 				}
 				message.channel.send("Leaderboard\n" + print)

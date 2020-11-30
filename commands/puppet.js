@@ -10,24 +10,43 @@ module.exports = {
 	perms: 4,
 	
 	execute(message, args, other) {
+
+		var type = message.channel.type
 		if (message.author.id != ownerID) {
-			if (!message.member.user.roles.cache.get("774488793364299786")) {
-				return;
+			if (type == "text") {
+				if (!message.member.user.roles.cache.find(r => r.name == "Matthew Bot Puppeteer")) {
+					return;
+				}
 			}
+		
 		}
 		
 		if (args.length == 0) {
 			return message.reply("You need a message!")
 		}
 		message.delete()
-		if (message.channel.type == "text") {
-			message.channel.send(args.join(' '))
+		if (type == "text") {
+			message.channel.send(args.join(' ')).catch(() => {
+				message.channel.send("Message cannot be empty.")
+			})
 		}
 		else {
-			message.client.users.cache.get(message.author.id).send(args.join(' '));
+			message.client.users.cache.get(message.author.id).send(args.join(' ')).catch(() => {
+				if (type == "text") {
+					message.channel.send("Message cannot be empty.")
+				}
+				else {
+					message.client.users.cache.get(message.author.id).send("Message cannot be empty.")
+				}
+			})
+		}
+		if (type == "text") {
+			console.log(`controlled by ${message.author.username} in ${message.channel.name} in ${message.guild.name}`)
+		}
+		else {
+			console.log(`controlled by ${message.author.username} in DMs.`)
 		}
 		
-		console.log(`controlled by ${message.author.username} in ${message.channel.name} in ${message.guild.name}`)
 	
 	},
 }

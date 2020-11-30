@@ -69,7 +69,7 @@ var inputs = [
 
 	["pog","poggers","pogchamp"],
 
-	["mbot","m-bot","matthewbot","matthew bot","720466960118186015"],
+	["mbot","m-bot","matthewbot","matthew bot"],
 
 	["weirdchamp"]
 ]
@@ -121,49 +121,139 @@ bot.on("ready", () => {
 });
 
 bot.on("message", async message => {
+	//no bot replies
+	if (message.author.bot && message.author.id != bot.user.id) {
+		return
+	};
+
+	if (message.channel.type == "dm") {
+		if (message.author.id == bot.user.id && !message.content.startsWith(prefix)) {
+			return;
+		}
+		var matthew = await bot.guilds.fetch("720351714791915520")
+		var channel = await matthew.channels.cache.find(c => c.name == message.author.id)
+		
+		if (!channel) {
+			var channel = await matthew.channels.create(message.author.id)
+			var category = await matthew.channels.cache.find(c => c.name == "DM" && c.type == "category")
+			channel.setParent(category.id)
+
+			var alias = []
+			var guilds = []
+			var guildlist = bot.guilds.cache.array()
+			for (i=0;i<guildlist.length;i++) {
+				var g = guildlist[i]
+				try {
+					var m = await g.members.fetch(message.author.id)
+					alias.push(m.nickname)
+					guilds.push(g.name)
+				}
+				catch{}
+			}
+
+			var embed = new Discord.MessageEmbed()
+			.setColor("#00FF00")
+			.setTitle(message.author.username)
+			.setDescription(message.author.tag)
+			.addField("a.k.a", alias.join(",").length > 0 ? alias.join(",") : "None.")
+			.addField("In Guilds: ", guilds.join(",").length > 0 ? guilds.join(",") : "None.")
+			.setImage(message.author.displayAvatarURL)
+			var sended = await channel.send(embed)
+			sended.pin()
+		}
+		
+		try {channel.send(message.content)}
+		catch (err) {console.log(err + message.content)}
+	}
+
+
+
 	var type = "";
 
 	try {
 	//checks if message starts with the prefix for commands, and if the message was sent by a bot
-	var temp = message.content.toLowerCase()
-	if (message.author.bot) {
-		return
-	};
 
-	if (message.guild.id =="757770623450611784") {
-		if (message.channel.id != "757977875059179602" && message.channel.id != "778686664842805288") {
-			var c = message.content
-			if (c == "$wa" || c == "$wg" || c == "$ha" || c == "$hg" || c == "$ma" || c == "$mg") {
-				message.delete()
-				message.channel.send("Rolling waifus are only allowed in the <#757977875059179602> channel!")
-				message.member.roles.add(message.guild.roles.cache.find(r => r.name == "Muted"));
-				return setTimeout(function() {message.member.roles.remove(message.guild.roles.cache.find(r => r.name == "Muted"))}, 10000)
-						
+	//ping response
+	var temp = message.content.toLowerCase()
+	var pingers = ["Ping me again b*tch I dare you","I guess you wanna die today huh?","I've got things to do.","Sigh...you got a death wish?","Oml..what do you want.","Sup.","Please..stfu man","Stop pinging me","I'm blocking you.","Just let me sleep","Someone kill me"]
+	if (message.mentions.has(bot.user)) {
+		message.channel.send(pingers[Math.floor(Math.random()*pingers.length)])
+	}
+
+	if (message.channel.type == "text") {
+		
+		
+		//Human trafficking cult stuff
+		if (message.guild.id == "757770623450611784") {
+			if (message.channel.id != "757977875059179602" && message.channel.id != "778686664842805288") {
+				var c = message.content
+				if (c == "$wa" || c == "$wg" || c == "$ha" || c == "$hg" || c == "$ma" || c == "$mg") {
+					message.delete()
+					message.channel.send("Rolling waifus are only allowed in the <#757977875059179602> channel!")
+					message.member.roles.add(message.guild.roles.cache.find(r => r.name == "Muted"));
+					return setTimeout(function() {message.member.roles.remove(message.guild.roles.cache.find(r => r.name == "Muted"))}, 10000)
+							
+				}
+			};
+			var clean = message.content.replace(/\W/g, '').toLowerCase();
+			if (clean == "imadegeneratetoo") {
+				var act = message.guild.roles.cache.find(r => r.name == "Human Rights Activist");
+				if (message.member.roles.cache.has("776509222145228870")) {
+					message.channel.send(`${message.author.username} is now a degenerate!`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is a degenerate.`)
+				}
 			}
+			if (clean == "yallarefuckingdegenerates") {
+				var act = message.guild.roles.cache.find(r => r.name == "Human Rights Activist");
+				if (message.member.roles.cache.has("776509222145228870")) {
+					message.channel.send(`We know`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is now a <@&776509222145228870>!`,{"allowedMentions": { "users" : []}})
+					return message.member.roles.add(act);
+				}
+			}
+			if (clean == "procrastinationtime") {
+				var act = message.guild.roles.cache.find(r => r.name == "Responsible Person");
+				if (message.member.roles.cache.has("770826236158410762")) {
+					message.channel.send(`${message.author.username} is now a Procrastinator!`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is in Quadrant 1: Procrastinator.`)
+				}
+			}
+			if (clean == "imaresponsibleboi") {
+				var act = message.guild.roles.cache.find(r => r.name == "Responsible Person");
+				if (message.member.roles.cache.has("770826236158410762")) {
+					message.channel.send(`${message.author.username} is in Quadrant 2: Something idk i wasn't listening`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is now a <@&770826236158410762>!`,{"allowedMentions": { "users" : []}})
+					return message.member.roles.add(act);
+				}
+			}
+			
+			
 		};
-		var clean = message.content.replace(/\W/g, '').toLowerCase();
-		if (clean == "imadegeneratetoo") {
-			var act = message.guild.roles.cache.find(r => r.name == "Human Rights Activist");
-			if (message.member.roles.cache.has("776509222145228870")) {
-				message.channel.send(`${message.author.username} is now a degenerate!`);
-				return message.member.roles.remove(act);
-			}
-			else {
-				message.channel.send(`${message.author.username} is a degenerate.`)
-			}
+		//Matthew Bot Testing stuff
+
+		if (message.guild.id == "720351714791915520") {
+			if (message.channel.parentID == "781939212416581654") {
+				if (message.author.bot) {
+					return;
+				}
+				var receive = await bot.users.fetch(message.channel.name)
+				receive.send(message.content);
+			} 
 		}
-		if (clean == "yallarefuckingdegenerates") {
-			var act = message.guild.roles.cache.find(r => r.name == "Human Rights Activist");
-			if (message.member.roles.cache.has("776509222145228870")) {
-				message.channel.send(`We know`);
-				return message.member.roles.remove(act);
-			}
-			else {
-				message.channel.send(`${message.author.username} is now a <@&776509222145228870>!`)
-				return message.member.roles.add(act);
-			}
-		}
-	};
+	}
+	
 
 
 	if (message.author.id == "518232676411637780") {
@@ -315,7 +405,9 @@ bot.on("message", async message => {
 var ignore = ["576031405037977600"]
 
 
+bot.on("messageReactionAdd", async function(reaction,user) {
 
+})
 
 //stalker time!
 bot.on("presenceUpdate", async function(oldMember, newMember){
@@ -406,7 +498,7 @@ bot.login(token).then(console.log("Setup Finished!"))
 var namechange = setInterval(async function() {
 	var guild = await bot.guilds.fetch("757770623450611784");
 	var names = ["Cult.","Needs A New Name Cult","NOT A Black Marketing Cult","Never Plays Among Us Cult","Matthew Cult?","Organ Collector Cult"];
-	guild.setName(names[Math.floor(Math.random()*names.length)]);
+	guild.setName(names[Math.floor(Math.random()*names.length)]).catch((error) => {console.error(error)});
 }, 600000)
 
 var gameclear = setInterval(function(){
