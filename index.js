@@ -175,16 +175,70 @@ bot.on("message", async message => {
 
 	//ping response
 	var temp = message.content.toLowerCase()
-	var pingers = ["Ping me again b*tch I dare you","I guess you wanna die today huh?","I've got things to do.","Sigh...you got a death wish?","Oml..what do you want.","Sup.","Please..stfu man","Stop pinging me","I'm blocking you.","Just let me sleep","Someone kill me"]
+	var pingers = ["Ping me again b*tch I dare you","I guess you wanna die today huh?","I've got things to do.","Sigh...you got a death wish?","Bruh what do you want","Sup.","Please just stfu man","Stop pinging me","I'm blocking you.","Just let me sleep","Someone kill me","I'm here wassup","._.",".-.","-_-","-___-"]
 	if (message.mentions.has(bot.user)) {
 		message.channel.send(pingers[Math.floor(Math.random()*pingers.length)])
 	}
 
 	if (message.channel.type == "text") {
 		
-		
+		if (message.author.id == bot.user.id) {
+			return;
+		}
 		//Human trafficking cult stuff
 		if (message.guild.id == "757770623450611784") {
+
+			//emoji counting
+			var emojis = message.content.match(/<:.+?:\d+>/g)
+			if (emojis) {
+				var emojis = emojis.map(e => e.match(/\d+/g)[0])
+				emojis = emojis.filter((v,i) => emojis.indexOf(v) == i)
+
+				for (var i=0;i<emojis.length;i++) {
+					var r = JSON.parse(fs.readFileSync('reactions.json').toString());
+					
+					
+					var e = message.guild.emojis.cache.get(emojis[i])
+					var u = message.author
+					
+					if (e.id in r.reactions) {
+						r.reactions[e.id].count++
+					}
+					else {
+						r.reactions[e.id] = {}
+						r.reactions[e.id]["name"] = e.name
+						r.reactions[e.id]["count"] = 1
+						r.reactions[e.id]["users"] = {}
+					}
+					if (u.id in r.reactions[e.id].users) {
+						r.reactions[e.id].users[u.id]++
+					}
+					else {
+						r.reactions[e.id].users[u.id] = 1
+					}
+
+					if (u.id in r.users) {
+						r.users[u.id].count++
+					}
+					else {
+						r.users[u.id] = {}
+						r.users[u.id]["name"] = u.username
+						r.users[u.id]["count"] = 1
+						r.users[u.id]["reactions"] = {}
+					}
+					if (e.id in r.users[u.id].reactions) {
+						r.users[u.id].reactions[e.id]++
+					}
+					else {
+						r.users[u.id].reactions[e.id] = 1
+					}
+
+					let list = JSON.stringify(r,null,2);
+					fs.writeFileSync('reactions.json', list);
+				}
+			}
+			
+			//only rolling in human trafficking channels
 			if (message.channel.id != "757977875059179602" && message.channel.id != "778686664842805288") {
 				var c = message.content
 				if (c == "$wa" || c == "$wg" || c == "$ha" || c == "$hg" || c == "$ma" || c == "$mg") {
@@ -235,6 +289,27 @@ bot.on("message", async message => {
 				}
 				else {
 					message.channel.send(`${message.author.username} is now a <@&770826236158410762>!`,{"allowedMentions": { "users" : []}})
+					return message.member.roles.add(act);
+				}
+			}
+			if (clean == "imapervert") {
+				var act = message.guild.roles.cache.find(r => r.name == "Innocent");
+				if (message.member.roles.cache.has("784135793987682384")) {
+					message.channel.send(`${message.author.username} couldn't fight the *urge*`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username}...h-h-***hentaii!***`)
+				}
+			}
+			if (clean == "imunder18") {
+				var act = message.guild.roles.cache.find(r => r.name == "Innocent");
+				if (message.member.roles.cache.has("784135793987682384")) {
+					message.channel.send(`${message.author.username} doesn't know anything :sweat:`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is now <@&784135793987682384>!`,{"allowedMentions": { "users" : []}})
 					return message.member.roles.add(act);
 				}
 			}
@@ -406,9 +481,96 @@ var ignore = ["576031405037977600"]
 
 
 bot.on("messageReactionAdd", async function(reaction,user) {
+	
+	if (user.bot) {
+		return;
+	}
+	if (!(reaction.emoji instanceof Discord.GuildEmoji)) {
+		return;
+	}
+	if (reaction.message.channel.type != "text") {
+		return;
+	}
+	if (reaction.message.guild.id != "757770623450611784") {
+		return;
+	}
+	console.log(reaction.emoji)
+	if (reaction.emoji.guild.id != "757770623450611784") {
+		return;
+	}
+	
+	
+	var r = JSON.parse(fs.readFileSync('reactions.json').toString());
+	var e = reaction.emoji
+	var u = user
+	console.log(reaction.emoji)
+	if (e.id in r.reactions) {
+		r.reactions[e.id].count++
+	}
+	else {
+		r.reactions[e.id] = {}
+		r.reactions[e.id]["name"] = e.name
+		r.reactions[e.id]["count"] = 1
+		r.reactions[e.id]["users"] = {}
+	}
+	if (u.id in r.reactions[e.id].users) {
+		r.reactions[e.id].users[u.id]++
+	}
+	else {
+		r.reactions[e.id].users[u.id] = 1
+	}
 
+	if (u.id in r.users) {
+		r.users[u.id].count++
+	}
+	else {
+		r.users[u.id] = {}
+		r.users[u.id]["name"] = u.username
+		r.users[u.id]["count"] = 1
+		r.users[u.id]["reactions"] = {}
+	}
+	if (e.id in r.users[u.id].reactions) {
+		r.users[u.id].reactions[e.id]++
+	}
+	else {
+		r.users[u.id].reactions[e.id] = 1
+	}
+
+	let list = JSON.stringify(r,null,2);
+	fs.writeFileSync('reactions.json', list);
+
+	
 })
 
+bot.on("raw", async packet => {
+	
+	if (packet.t != "MESSAGE_REACTION_ADD") {
+		return;
+	}
+	var guild = await bot.guilds.fetch(packet.d.guild_id)
+	var member = await guild.members.fetch(packet.d.user_id)
+	//ignore if bot
+	if (member.user.bot) {
+		return;
+	}
+
+	
+	const channel = await guild.channels.cache.get(packet.d.channel_id);
+
+	//if channel message is already cached no need to call twice
+	//it'll be detected by messageReactionAdd anyways
+	if (channel.messages.cache.has(packet.d.message_id)) return;
+	var message = await channel.messages.fetch(packet.d.message_id)
+	// Emojis can have identifiers of name:id format, so we have to account for that case as well
+	const emoji = packet.d.emoji.id ? packet.d.emoji.id : packet.d.emoji.name;
+	// This gives us the reaction we need to emit the event properly, in top of the message object
+	const reaction = await message.reactions.cache.get(emoji);
+	// Adds the currently reacting user to the reaction's users collection.
+	if (reaction) reaction.users = (packet.d.user_id, member.user);
+
+
+	bot.emit('messageReactionAdd', reaction, member.user);
+})
 //stalker time!
 bot.on("presenceUpdate", async function(oldMember, newMember){
 	

@@ -36,6 +36,9 @@ function findMember(message,args) {
 	if (message.mentions.members.first()) {
 		return message.mentions.members.first().id;
 	}
+	else if (args[0].length == 18 && !isNaN(args[0])) {
+		return args[0]
+	}
 	else {
 		var finder = args.join(" ").toLowerCase()
 				

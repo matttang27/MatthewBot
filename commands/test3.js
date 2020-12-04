@@ -15,8 +15,7 @@ module.exports = {
 		var commandName = other[2]
 		var serverQueue = other[3]
 
-		var user = bot.users.cache.array()
-		console.log(user.length);
+		message.react("744341705721118740")
 		
 	}
 };
