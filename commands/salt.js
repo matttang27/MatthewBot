@@ -5,6 +5,7 @@ const Discord = require('discord.js');
 module.exports = {
 	args: [0],
 	name: "salt",
+	category: "fun",
 	description: "There's too much happiness. This is a game of betrayal and deceit, a bringer of agony and malice. This is SALT.",
 	usage: `${prefix}salt`,
 	perms: 4,

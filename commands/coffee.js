@@ -5,6 +5,7 @@ const Discord = require('discord.js');
 module.exports = {
 	args: [-1],
 	name: "coffee",
+	category: "fun",
 	description: "Coffee Game! Enter a word containing the two letters at the correct spaces",
 	usage: `${prefix}coffee {opt. settings}`,
 	perms: 4,

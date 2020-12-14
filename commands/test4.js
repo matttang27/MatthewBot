@@ -9,22 +9,16 @@ module.exports = {
 	name: "test4",
 	description: "4th test",
 	usage: `${prefix}test4`,
-	perms: 4,
+	perms: 1,
 	async execute(message, args, other) {
 		var admin = other[0]
 		var bot = other[1]
 		var commandName = other[2]
-		var words = require("an-array-of-english-words")
-		var counter = 0;
-		var m = "";
-		while(counter < words.length) {
-			m = "";
-			while(m.length <= 1900) {
-				m += words[counter] + "\n"
-				counter++;
-			}
-			message.channel.send(m);
-		}
+
+		const dirs = fs.readdirSync('/home/runner/Matthew-Bot/amongus');
+		message.guild.setIcon(`/home/runner/Matthew-Bot/amongus/${dirs[Math.floor(Math.random()*dirs.length)]}`)
+
+		
 		
 		
 	}

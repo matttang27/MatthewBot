@@ -116,11 +116,12 @@ function converter(input,rule,output) {
 
 
 bot.on("ready", () => {
-  console.log("Bot Ready!");
+  console.log("Bot Ready at " + new Date().toString());
   changeStatus()
 });
 
 bot.on("message", async message => {
+	try {
 	//no bot replies
 	if (message.author.bot && message.author.id != bot.user.id) {
 		return
@@ -170,7 +171,7 @@ bot.on("message", async message => {
 
 	var type = "";
 
-	try {
+	
 	//checks if message starts with the prefix for commands, and if the message was sent by a bot
 
 	//ping response
@@ -613,7 +614,7 @@ bot.on("presenceUpdate", async function(oldMember, newMember){
 		}
 		console.log(`\n${username} from ${newMember.guild.name} has gone off.\n`)
 	}
-
+	
 });
 
 bot.on("guildCreate", function(guild){
@@ -623,6 +624,10 @@ bot.on("guildCreate", function(guild){
   channel.send("Hi! I'm Matthew Bot, at your service!")
 });
 
+
+bot.on('rateLimit', (info) => {
+  console.log(`Rate limit hit ${info}`)
+})
 //serverstuff
 
 
@@ -645,7 +650,7 @@ server.all('/', (req, res)=>{
 })
 
 function keepAlive(){
-    server.listen(3000, ()=>{console.log("Server is Ready!")});
+    server.listen(3000, ()=>{console.log("Server is Ready at " + new Date().toString())});
 }
 
 
@@ -655,13 +660,15 @@ function keepAlive(){
 keepAlive()
 bot.login(token).then(console.log("Setup Finished!"))
 
-
+const dirs = fs.readdirSync('/home/runner/Matthew-Bot/amongus');
+console.log(dirs)
 //checks games.json every 10 seconds to clear old challenges
 var namechange = setInterval(async function() {
 	var guild = await bot.guilds.fetch("757770623450611784");
 	var names = ["Cult.","Needs A New Name Cult","NOT A Black Marketing Cult","Never Plays Among Us Cult","Matthew Cult?","Organ Collector Cult"];
+	guild.setIcon(`/home/runner/Matthew-Bot/amongus/${dirs[Math.floor(Math.random()*dirs.length)]}`)
 	guild.setName(names[Math.floor(Math.random()*names.length)]).catch((error) => {console.error(error)});
-}, 600000)
+}, 10000)
 
 var gameclear = setInterval(function(){
 	var g = JSON.parse(fs.readFileSync('games.json').toString());

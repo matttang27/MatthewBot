@@ -5,6 +5,7 @@ const Discord = require('discord.js');
 module.exports = {
 	args: [-1],
 	name: "beer",
+	category: "fun",
 	description: "Beer Game! Enter a word containing all the letters in any order.",
 	usage: `${prefix}beer {opt. settings}`,
 	perms: 4,

@@ -11,12 +11,13 @@ module.exports = {
 	
 	execute(message, args, other) {
 		data = []
-		const {commands} = message.client;
+		console.log
+		const {rpgcommands} = message.client;
 		
 		//sends command list if there are no arguments
 		if (!args.length) {
 			data.push("Here's a list of all my commands:");
-			commands.forEach(command => {
+			rpgcommands.forEach(command => {
 				if (command.ownerOnly && message.author.id != ownerID) {
 					return;
 				}
@@ -39,7 +40,7 @@ module.exports = {
 		}
 
 		const name = args[0].toLowerCase();
-		const command = commands.get(name) || commands.find(cmd => cmd.aliases && cmd.aliases.includes(name));
+		const command = rpgcommands.get(name) || rpgcommands.find(cmd => cmd.aliases && cmd.aliases.includes(name));
 
 		if (!command) {
 			return message.reply('that\'s not a valid command!');
