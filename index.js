@@ -1,15 +1,17 @@
 const fs = require('fs');
 const Discord = require("discord.js");
-const bot = new Discord.Client();
+var bot = new Discord.Client();
 const {prefix, token, ownerID, rpgprefix} = require("./config.json");
 bot.commands = new Discord.Collection();
 bot.rpgcommands = new Discord.Collection();
-
+bot.events = new Discord.Collection()
+var func = require("./functions.js")
+func.importAll(func,global)
+const {inputs,outputs,cleanup,gameClear,sleep} = require("./functions.js")
 
 const Role = require('./role.js')
 
 //currently making roles in the other repl.it
-const queue = new Map();
 var games = []
 
 
@@ -17,10 +19,7 @@ var praise = ["nice","good","amazing","godly","legend"]
 
 var chat = new Map();
 
-function cleanup(str) {
-	//I don't even know man
-  return str.replace(/[^0-9a-z-A-Z ]/g, "").replace(/ +/, " ")
-}
+
 
 
 
@@ -47,6 +46,7 @@ for (const file of rpgcommandFiles) {
 	bot.rpgcommands.set(command.name, command);
 }
 
+//import 
 //Firebase stuff
 
 const admin = require('firebase-admin');
@@ -62,54 +62,6 @@ var rpgadmin = admin.initializeApp({
   credential: admin.credential.cert(rpgserviceAccount)
 },"rpg");
 
-
-//bunch of reactions
-var inputs = [
-	["asdfgergighr"],
-
-	["pog","poggers","pogchamp"],
-
-	["mbot","m-bot","matthewbot","matthew bot"],
-
-	["weirdchamp"]
-]
-var outputs = [
-	["EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEE    EEEE     EEEE    EEEE     EEEE    EEEE     EEEE     EEEE    EEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEE\nEE         EE         EE\nEEEE    EEEE     EEEE\nEE         EE         EE\nEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEE         EE         EE         EE         EE         EE\nEEEE    EEEE     EEEE    EEEE    EEEE     EEEE\nEE         EE         EE         EE         EE         EE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEE\nEE         EE         EE\nEEEE    EEEE     EEEE\nEE         EE         EE\nEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEE    EEEE     EEEE    EEEE     EEEE    EEEE     EEEE     EEEE    EEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"],
-
-	["That's pretty pog <a:pog:758146624400392212>"],
-	
-	["Did someone say ~~jim~~ **MATTHEW BOT?**"],
-	
-	
-	["True, that is kinda weirdchamp.","https://tenor.com/view/weirdchamping-weirdchamp-twitch-meme-ryan-gutierrez-gif-17202815"]
-]
-
-
-/*input meaning
-&& - and
-|| = or
-! = not
-%% = doesn't have
-## = has
-->> = word comes after(add spaces manually)
-() = brackets
-;;"" = response(s) (In quotes)
-ex.
-
-##("very"->>"pog"||"that's"->>"pog")&&%%"weirdchamp";;"That's pretty pog"
-If string has very pog or that's pog, and doesn't have weirdchamp, respond with That's pretty pog
-##abdullah&&%%supreme;;"You must call him Supreme Leader Abdullah!"
-
-WIP
-*/
-
-function converter(input,rule,output) {
-	//WIP
-} 
-
-
-
-
   
 
 // discord
@@ -117,7 +69,8 @@ function converter(input,rule,output) {
 
 bot.on("ready", () => {
   console.log("Bot Ready at " + new Date().toString());
-  changeStatus()
+  changeStatus(bot)
+	console.log("Changing status at " + new Date().toString());
 });
 
 bot.on("message", async message => {
@@ -573,6 +526,8 @@ bot.on("raw", async packet => {
 	bot.emit('messageReactionAdd', reaction, member.user);
 })
 //stalker time!
+
+
 bot.on("presenceUpdate", async function(oldMember, newMember){
 	
 
@@ -624,7 +579,9 @@ bot.on("guildCreate", function(guild){
   channel.send("Hi! I'm Matthew Bot, at your service!")
 });
 
+bot.on('guildMemberAdd', (member) => {
 
+})
 bot.on('rateLimit', (info) => {
   console.log(`Rate limit hit ${info}`)
 })
@@ -660,66 +617,13 @@ function keepAlive(){
 keepAlive()
 bot.login(token).then(console.log("Setup Finished!"))
 
-const dirs = fs.readdirSync('/home/runner/Matthew-Bot/amongus');
-console.log(dirs)
-//checks games.json every 10 seconds to clear old challenges
-var namechange = setInterval(async function() {
+
+
+async function nameChange() {
+	const dirs = fs.readdirSync('/home/runner/Matthew-Bot/amongus');
 	var guild = await bot.guilds.fetch("757770623450611784");
 	var names = ["Cult.","Needs A New Name Cult","NOT A Black Marketing Cult","Never Plays Among Us Cult","Matthew Cult?","Organ Collector Cult"];
 	guild.setIcon(`/home/runner/Matthew-Bot/amongus/${dirs[Math.floor(Math.random()*dirs.length)]}`)
 	guild.setName(names[Math.floor(Math.random()*names.length)]).catch((error) => {console.error(error)});
-}, 10000)
-
-var gameclear = setInterval(function(){
-	var g = JSON.parse(fs.readFileSync('games.json').toString());
-	var games = g.games.filter(myFunction);
-
-	function myFunction(game) {
-		var diff = Date.now() - game.challengetime
-		return Math.floor(diff/60000) < 5
-	}
-	g.games = games
-	let data = JSON.stringify(g,null,2);
-	fs.writeFileSync('games.json', data);
-},10000)
-
-//clears counters every minute
-var gameclear = setInterval(function(){
-	var g = JSON.parse(fs.readFileSync('games.json').toString());
-	var games = g.games.filter(myFunction);
-
-	function myFunction(game) {
-		var diff = Date.now() - game.challengetime
-		return Math.floor(diff/60000) < 5
-	}
-	g.games = games
-	let data = JSON.stringify(g,null,2);
-	fs.writeFileSync('games.json', data);
-},60000)
-
-function changeStatus() {
-	setTimeout(function(){
-		bot.user.setPresence({ activity: { name: 'Everyone must die.' }, status: 'dnd' })
-		.then()
-		.catch(console.error);
-		var message2 = setTimeout(function(){
-			bot.user.setPresence({ activity: { name: 'Everyone must die.' }, status: 'idle' })
-			.then()
-			.catch(console.error);
-			var message3 = setTimeout(function(){
-				bot.user.setPresence({ activity: { name: 'Everyone must die.' }, status: 'online' })
-				.then()
-				.catch(console.error);
-				changeStatus()
-			},10000)
-		}, 10000)
-
-	}, 10000)
 }
-
-function sleep(ms) {
-	return new Promise((resolve) => {
-	  setTimeout(resolve, ms);
-	});
-}   
 
