@@ -4,10 +4,12 @@ var bot = new Discord.Client();
 const {prefix, token, ownerID, rpgprefix} = require("./config.json");
 bot.commands = new Discord.Collection();
 bot.rpgcommands = new Discord.Collection();
-bot.events = new Discord.Collection()
+
 var func = require("./functions.js")
 func.importAll(func,global)
 const {inputs,outputs,cleanup,gameClear,sleep} = require("./functions.js")
+
+
 
 const Role = require('./role.js')
 
@@ -497,7 +499,10 @@ bot.on("messageReactionAdd", async function(reaction,user) {
 })
 
 bot.on("raw", async packet => {
-	
+	if (packet.t == "TYPING_START" || packet.t == "MESSAGE_CREATE") {
+		return
+	}
+	console.log(packet)
 	if (packet.t != "MESSAGE_REACTION_ADD") {
 		return;
 	}
@@ -529,7 +534,26 @@ bot.on("raw", async packet => {
 
 
 bot.on("presenceUpdate", async function(oldMember, newMember){
-	
+	console.log("hey")
+	console.log(newMember)
+	if (newMember.user.id == "576031405037977600") {
+		if (newMember.guild.id == "712382129673338991") {
+			console.log(newMember)
+			var channel = await newMember.guild.channels.cache.find(c => c.name == "general")
+			console.log(channel)
+			if (!channel) {
+				return
+			}
+			
+			var status = oldMember.status
+			if (newMember.status != 'offline' && status == 'offline') {
+				channel.send("Edward has gone on!")
+			}
+			else if (newMember.status == 'offline') {
+				channel.send("Edward has gone off.")
+			}
+		}
+	}
 
 	
 	
@@ -605,6 +629,7 @@ server.all('/', (req, res)=>{
   res.sendFile(__dirname + '/website/index.html');
 
 })
+
 
 function keepAlive(){
     server.listen(3000, ()=>{console.log("Server is Ready at " + new Date().toString())});
