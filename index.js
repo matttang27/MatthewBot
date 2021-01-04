@@ -1,3 +1,5 @@
+
+
 const fs = require('fs');
 const Discord = require("discord.js");
 var bot = new Discord.Client();
@@ -9,7 +11,22 @@ var func = require("./functions.js")
 func.importAll(func,global)
 const {inputs,outputs,cleanup,gameClear,sleep} = require("./functions.js")
 
+var startTime = new Date().toISOString().substring(2)
+fs.writeFile("./logs/" + startTime + ".txt", "Created file.", function (err) {if (err) throw err}); 
 
+var originalLog = console.log;
+
+console.log = function(str){
+  originalLog(str);
+  fs.appendFile('fulllog.txt',"\n\n" + new Date() + "\n\n" + JSON.stringify(str), (err) => {
+  	if (err) throw err;
+  	
+	});	
+	fs.appendFile('./logs/' + startTime + '.txt',"\n\n" + new Date() + "\n\n" + JSON.stringify(str), (err) => {
+  	if (err) throw err;
+  	
+	});	
+}
 
 const Role = require('./role.js')
 

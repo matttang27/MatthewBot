@@ -28,6 +28,7 @@ function minutesToMessage(minutes) {
 	return timer
 }
 
+
 function findMember(message,args) {
 	if (args.length >= 1 && message.channel.type == "dm")  {
 		message.reply("You can only search for others inside a guild!")
