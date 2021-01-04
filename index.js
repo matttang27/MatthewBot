@@ -1,15 +1,36 @@
+
+
 const fs = require('fs');
 const Discord = require("discord.js");
-const bot = new Discord.Client();
+var bot = new Discord.Client();
 const {prefix, token, ownerID, rpgprefix} = require("./config.json");
 bot.commands = new Discord.Collection();
 bot.rpgcommands = new Discord.Collection();
 
+var func = require("./functions.js")
+func.importAll(func,global)
+const {inputs,outputs,cleanup,gameClear,sleep} = require("./functions.js")
+
+var startTime = new Date().toISOString().substring(2)
+fs.writeFile("./logs/" + startTime + ".txt", "Created file.", function (err) {if (err) throw err}); 
+
+var originalLog = console.log;
+
+console.log = function(str){
+  originalLog(str);
+  fs.appendFile('fulllog.txt',"\n\n" + new Date() + "\n\n" + JSON.stringify(str), (err) => {
+  	if (err) throw err;
+  	
+	});	
+	fs.appendFile('./logs/' + startTime + '.txt',"\n\n" + new Date() + "\n\n" + JSON.stringify(str), (err) => {
+  	if (err) throw err;
+  	
+	});	
+}
 
 const Role = require('./role.js')
 
 //currently making roles in the other repl.it
-const queue = new Map();
 var games = []
 
 
@@ -17,10 +38,7 @@ var praise = ["nice","good","amazing","godly","legend"]
 
 var chat = new Map();
 
-function cleanup(str) {
-	//I don't even know man
-  return str.replace(/[^0-9a-z-A-Z ]/g, "").replace(/ +/, " ")
-}
+
 
 
 
@@ -47,6 +65,7 @@ for (const file of rpgcommandFiles) {
 	bot.rpgcommands.set(command.name, command);
 }
 
+//import 
 //Firebase stuff
 
 const admin = require('firebase-admin');
@@ -62,72 +81,229 @@ var rpgadmin = admin.initializeApp({
   credential: admin.credential.cert(rpgserviceAccount)
 },"rpg");
 
-
-//bunch of reactions
-var inputs = [
-	["asdfgergighr"],
-
-	["pog","poggers","pogchamp"],
-
-	["mbot","m-bot","matthewbot","matthew bot","720466960118186015"],
-
-	["weirdchamp"]
-]
-var outputs = [
-	["EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEE    EEEE     EEEE    EEEE     EEEE    EEEE     EEEE     EEEE    EEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEE\nEE         EE         EE\nEEEE    EEEE     EEEE\nEE         EE         EE\nEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEE         EE         EE         EE         EE         EE\nEEEE    EEEE     EEEE    EEEE    EEEE     EEEE\nEE         EE         EE         EE         EE         EE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEE\nEE         EE         EE\nEEEE    EEEE     EEEE\nEE         EE         EE\nEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEE    EEEE     EEEE    EEEE     EEEE    EEEE     EEEE     EEEE    EEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"],
-
-	["That's pretty pog <a:pog:758146624400392212>"],
-	
-	["Did someone say ~~jim~~ **MATTHEW BOT?**"],
-	
-	["True, that is kinda weirdchamp.","https://tenor.com/view/weirdchamping-weirdchamp-twitch-meme-ryan-gutierrez-gif-17202815"]
-]
-
-
-/*input meaning
-&& - and
-|| = or
-! = not
-%% = doesn't have
-## = has
-->> = word comes after(add spaces manually)
-() = brackets
-;;"" = response(s) (In quotes)
-ex.
-
-##("very"->>"pog"||"that's"->>"pog")&&%%"weirdchamp";;"That's pretty pog"
-If string has very pog or that's pog, and doesn't have weirdchamp, respond with That's pretty pog
-##abdullah&&%%supreme;;"You must call him Supreme Leader Abdullah!"
-
-WIP
-*/
-
-function converter(input,rule,output) {
-	//WIP
-} 
-
-
-
-
   
 
 // discord
 
 
 bot.on("ready", () => {
-  console.log("Bot Ready!");
-  changeStatus()
+  console.log("Bot Ready at " + new Date().toString());
+  changeStatus(bot)
+	console.log("Changing status at " + new Date().toString());
 });
 
 bot.on("message", async message => {
-	var type = "";
-
 	try {
-	//checks if message starts with the prefix for commands, and if the message was sent by a bot
-	var temp = message.content.toLowerCase()
-	if (message.author.bot) {
+	//no bot replies
+	if (message.author.bot && message.author.id != bot.user.id) {
 		return
 	};
+
+	if (message.channel.type == "dm") {
+		if (message.author.id == bot.user.id && !message.content.startsWith(prefix)) {
+			return;
+		}
+		var matthew = await bot.guilds.fetch("720351714791915520")
+		var channel = await matthew.channels.cache.find(c => c.name == message.author.id)
+		
+		if (!channel) {
+			var channel = await matthew.channels.create(message.author.id)
+			var category = await matthew.channels.cache.find(c => c.name == "DM" && c.type == "category")
+			channel.setParent(category.id)
+
+			var alias = []
+			var guilds = []
+			var guildlist = bot.guilds.cache.array()
+			for (i=0;i<guildlist.length;i++) {
+				var g = guildlist[i]
+				try {
+					var m = await g.members.fetch(message.author.id)
+					alias.push(m.nickname)
+					guilds.push(g.name)
+				}
+				catch{}
+			}
+
+			var embed = new Discord.MessageEmbed()
+			.setColor("#00FF00")
+			.setTitle(message.author.username)
+			.setDescription(message.author.tag)
+			.addField("a.k.a", alias.join(",").length > 0 ? alias.join(",") : "None.")
+			.addField("In Guilds: ", guilds.join(",").length > 0 ? guilds.join(",") : "None.")
+			.setImage(message.author.displayAvatarURL)
+			var sended = await channel.send(embed)
+			sended.pin()
+		}
+		
+		try {channel.send(message.content)}
+		catch (err) {console.log(err + message.content)}
+	}
+
+
+
+	var type = "";
+
+	
+	//checks if message starts with the prefix for commands, and if the message was sent by a bot
+
+	//ping response
+	var temp = message.content.toLowerCase()
+	var pingers = ["Ping me again b*tch I dare you","I guess you wanna die today huh?","I've got things to do.","Sigh...you got a death wish?","Bruh what do you want","Sup.","Please just stfu man","Stop pinging me","I'm blocking you.","Just let me sleep","Someone kill me","I'm here wassup","._.",".-.","-_-","-___-"]
+	if (message.mentions.has(bot.user)) {
+		message.channel.send(pingers[Math.floor(Math.random()*pingers.length)])
+	}
+
+	if (message.channel.type == "text") {
+		
+		if (message.author.id == bot.user.id) {
+			return;
+		}
+		//Human trafficking cult stuff
+		if (message.guild.id == "757770623450611784") {
+
+			//emoji counting
+			var emojis = message.content.match(/<:.+?:\d+>/g)
+			if (emojis) {
+				var emojis = emojis.map(e => e.match(/\d+/g)[0])
+				emojis = emojis.filter((v,i) => emojis.indexOf(v) == i)
+
+				for (var i=0;i<emojis.length;i++) {
+					var r = JSON.parse(fs.readFileSync('reactions.json').toString());
+					
+					
+					var e = message.guild.emojis.cache.get(emojis[i])
+					var u = message.author
+					
+					if (e.id in r.reactions) {
+						r.reactions[e.id].count++
+					}
+					else {
+						r.reactions[e.id] = {}
+						r.reactions[e.id]["name"] = e.name
+						r.reactions[e.id]["count"] = 1
+						r.reactions[e.id]["users"] = {}
+					}
+					if (u.id in r.reactions[e.id].users) {
+						r.reactions[e.id].users[u.id]++
+					}
+					else {
+						r.reactions[e.id].users[u.id] = 1
+					}
+
+					if (u.id in r.users) {
+						r.users[u.id].count++
+					}
+					else {
+						r.users[u.id] = {}
+						r.users[u.id]["name"] = u.username
+						r.users[u.id]["count"] = 1
+						r.users[u.id]["reactions"] = {}
+					}
+					if (e.id in r.users[u.id].reactions) {
+						r.users[u.id].reactions[e.id]++
+					}
+					else {
+						r.users[u.id].reactions[e.id] = 1
+					}
+
+					let list = JSON.stringify(r,null,2);
+					fs.writeFileSync('reactions.json', list);
+				}
+			}
+			
+			//only rolling in human trafficking channels
+			if (message.channel.id != "757977875059179602" && message.channel.id != "778686664842805288") {
+				var c = message.content
+				if (c == "$wa" || c == "$wg" || c == "$ha" || c == "$hg" || c == "$ma" || c == "$mg") {
+					message.delete()
+					message.channel.send("Rolling waifus are only allowed in the <#757977875059179602> channel!")
+					message.member.roles.add(message.guild.roles.cache.find(r => r.name == "Muted"));
+					return setTimeout(function() {message.member.roles.remove(message.guild.roles.cache.find(r => r.name == "Muted"))}, 10000)
+							
+				}
+			};
+			var clean = message.content.replace(/\W/g, '').toLowerCase();
+			if (clean == "imadegeneratetoo") {
+				var act = message.guild.roles.cache.find(r => r.name == "Human Rights Activist");
+				if (message.member.roles.cache.has("776509222145228870")) {
+					message.channel.send(`${message.author.username} is now a degenerate!`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is a degenerate.`)
+				}
+			}
+			if (clean == "yallarefuckingdegenerates") {
+				var act = message.guild.roles.cache.find(r => r.name == "Human Rights Activist");
+				if (message.member.roles.cache.has("776509222145228870")) {
+					message.channel.send(`We know`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is now a <@&776509222145228870>!`,{"allowedMentions": { "users" : []}})
+					return message.member.roles.add(act);
+				}
+			}
+			if (clean == "procrastinationtime") {
+				var act = message.guild.roles.cache.find(r => r.name == "Responsible Person");
+				if (message.member.roles.cache.has("770826236158410762")) {
+					message.channel.send(`${message.author.username} is now a Procrastinator!`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is in Quadrant 1: Procrastinator.`)
+				}
+			}
+			if (clean == "imaresponsibleboi") {
+				var act = message.guild.roles.cache.find(r => r.name == "Responsible Person");
+				if (message.member.roles.cache.has("770826236158410762")) {
+					message.channel.send(`${message.author.username} is in Quadrant 2: Something idk i wasn't listening`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is now a <@&770826236158410762>!`,{"allowedMentions": { "users" : []}})
+					return message.member.roles.add(act);
+				}
+			}
+			if (clean == "imapervert") {
+				var act = message.guild.roles.cache.find(r => r.name == "Innocent");
+				if (message.member.roles.cache.has("784135793987682384")) {
+					message.channel.send(`${message.author.username} couldn't fight the *urge*`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username}...h-h-***hentaii!***`)
+				}
+			}
+			if (clean == "imunder18") {
+				var act = message.guild.roles.cache.find(r => r.name == "Innocent");
+				if (message.member.roles.cache.has("784135793987682384")) {
+					message.channel.send(`${message.author.username} doesn't know anything :sweat:`);
+					return message.member.roles.remove(act);
+				}
+				else {
+					message.channel.send(`${message.author.username} is now <@&784135793987682384>!`,{"allowedMentions": { "users" : []}})
+					return message.member.roles.add(act);
+				}
+			}
+			
+			
+		};
+		//Matthew Bot Testing stuff
+
+		if (message.guild.id == "720351714791915520") {
+			if (message.channel.parentID == "781939212416581654") {
+				if (message.author.bot) {
+					return;
+				}
+				var receive = await bot.users.fetch(message.channel.name)
+				receive.send(message.content);
+			} 
+		}
+	}
+	
+
+
 	if (message.author.id == "518232676411637780") {
 		message.react("730499606915579954")
 	}
@@ -156,9 +332,6 @@ bot.on("message", async message => {
 					return
 				}
 			}
-
-			
-
 
 		}
 		if (temp.length == 1 && temp.includes("e")) {
@@ -220,7 +393,6 @@ bot.on("message", async message => {
 	}
 	
 	if (!command) {
-		message.channel.send("I don't think I have that command ;-;");
 		return;
 	}
 
@@ -281,11 +453,124 @@ bot.on("message", async message => {
 var ignore = ["576031405037977600"]
 
 
-
-
-//stalker time!
-bot.on("presenceUpdate", async function(oldMember, newMember){
+bot.on("messageReactionAdd", async function(reaction,user) {
 	
+	if (user.bot) {
+		return;
+	}
+	if (!(reaction.emoji instanceof Discord.GuildEmoji)) {
+		return;
+	}
+	if (reaction.message.channel.type != "text") {
+		return;
+	}
+	if (reaction.message.guild.id != "757770623450611784") {
+		return;
+	}
+	console.log(reaction.emoji)
+	if (reaction.emoji.guild.id != "757770623450611784") {
+		return;
+	}
+	
+	
+	var r = JSON.parse(fs.readFileSync('reactions.json').toString());
+	var e = reaction.emoji
+	var u = user
+	console.log(reaction.emoji)
+	if (e.id in r.reactions) {
+		r.reactions[e.id].count++
+	}
+	else {
+		r.reactions[e.id] = {}
+		r.reactions[e.id]["name"] = e.name
+		r.reactions[e.id]["count"] = 1
+		r.reactions[e.id]["users"] = {}
+	}
+	if (u.id in r.reactions[e.id].users) {
+		r.reactions[e.id].users[u.id]++
+	}
+	else {
+		r.reactions[e.id].users[u.id] = 1
+	}
+
+	if (u.id in r.users) {
+		r.users[u.id].count++
+	}
+	else {
+		r.users[u.id] = {}
+		r.users[u.id]["name"] = u.username
+		r.users[u.id]["count"] = 1
+		r.users[u.id]["reactions"] = {}
+	}
+	if (e.id in r.users[u.id].reactions) {
+		r.users[u.id].reactions[e.id]++
+	}
+	else {
+		r.users[u.id].reactions[e.id] = 1
+	}
+
+	let list = JSON.stringify(r,null,2);
+	fs.writeFileSync('reactions.json', list);
+
+	
+})
+
+bot.on("raw", async packet => {
+	if (packet.t == "TYPING_START" || packet.t == "MESSAGE_CREATE") {
+		return
+	}
+	console.log(packet)
+	if (packet.t != "MESSAGE_REACTION_ADD") {
+		return;
+	}
+	var guild = await bot.guilds.fetch(packet.d.guild_id)
+	var member = await guild.members.fetch(packet.d.user_id)
+	//ignore if bot
+	if (member.user.bot) {
+		return;
+	}
+
+	
+	const channel = await guild.channels.cache.get(packet.d.channel_id);
+
+	//if channel message is already cached no need to call twice
+	//it'll be detected by messageReactionAdd anyways
+	if (channel.messages.cache.has(packet.d.message_id)) return;
+	var message = await channel.messages.fetch(packet.d.message_id)
+	// Emojis can have identifiers of name:id format, so we have to account for that case as well
+	const emoji = packet.d.emoji.id ? packet.d.emoji.id : packet.d.emoji.name;
+	// This gives us the reaction we need to emit the event properly, in top of the message object
+	const reaction = await message.reactions.cache.get(emoji);
+	// Adds the currently reacting user to the reaction's users collection.
+	if (reaction) reaction.users = (packet.d.user_id, member.user);
+
+
+	bot.emit('messageReactionAdd', reaction, member.user);
+})
+//stalker time!
+
+
+bot.on("presenceUpdate", async function(oldMember, newMember){
+	console.log("hey")
+	console.log(newMember)
+	if (newMember.user.id == "576031405037977600") {
+		if (newMember.guild.id == "712382129673338991") {
+			console.log(newMember)
+			var channel = await newMember.guild.channels.cache.find(c => c.name == "general")
+			console.log(channel)
+			if (!channel) {
+				return
+			}
+			
+			var status = oldMember.status
+			if (newMember.status != 'offline' && status == 'offline') {
+				channel.send("Edward has gone on!")
+			}
+			else if (newMember.status == 'offline') {
+				channel.send("Edward has gone off.")
+			}
+		}
+	}
 
 	
 	
@@ -325,7 +610,7 @@ bot.on("presenceUpdate", async function(oldMember, newMember){
 		}
 		console.log(`\n${username} from ${newMember.guild.name} has gone off.\n`)
 	}
-
+	
 });
 
 bot.on("guildCreate", function(guild){
@@ -335,6 +620,12 @@ bot.on("guildCreate", function(guild){
   channel.send("Hi! I'm Matthew Bot, at your service!")
 });
 
+bot.on('guildMemberAdd', (member) => {
+
+})
+bot.on('rateLimit', (info) => {
+  console.log(`Rate limit hit ${info}`)
+})
 //serverstuff
 
 
@@ -356,8 +647,9 @@ server.all('/', (req, res)=>{
 
 })
 
+
 function keepAlive(){
-    server.listen(3000, ()=>{console.log("Server is Ready!")});
+    server.listen(3000, ()=>{console.log("Server is Ready at " + new Date().toString())});
 }
 
 
@@ -368,58 +660,12 @@ keepAlive()
 bot.login(token).then(console.log("Setup Finished!"))
 
 
-//checks games.json every 10 seconds to clear old challenges
 
-var gameclear = setInterval(function(){
-	var g = JSON.parse(fs.readFileSync('games.json').toString());
-	var games = g.games.filter(myFunction);
-
-	function myFunction(game) {
-		var diff = Date.now() - game.challengetime
-		return Math.floor(diff/60000) < 5
-	}
-	g.games = games
-	let data = JSON.stringify(g,null,2);
-	fs.writeFileSync('games.json', data);
-},10000)
-
-//clears counters every minute
-var gameclear = setInterval(function(){
-	var g = JSON.parse(fs.readFileSync('games.json').toString());
-	var games = g.games.filter(myFunction);
-
-	function myFunction(game) {
-		var diff = Date.now() - game.challengetime
-		return Math.floor(diff/60000) < 5
-	}
-	g.games = games
-	let data = JSON.stringify(g,null,2);
-	fs.writeFileSync('games.json', data);
-},60000)
-
-function changeStatus() {
-	setTimeout(function(){
-		bot.user.setPresence({ activity: { name: 'Everyone must die.' }, status: 'dnd' })
-		.then()
-		.catch(console.error);
-		var message2 = setTimeout(function(){
-			bot.user.setPresence({ activity: { name: 'Everyone must die.' }, status: 'idle' })
-			.then()
-			.catch(console.error);
-			var message3 = setTimeout(function(){
-				bot.user.setPresence({ activity: { name: 'Everyone must die.' }, status: 'online' })
-				.then()
-				.catch(console.error);
-				changeStatus()
-			},10000)
-		}, 10000)
-
-	}, 10000)
+async function nameChange() {
+	const dirs = fs.readdirSync('/home/runner/Matthew-Bot/amongus');
+	var guild = await bot.guilds.fetch("757770623450611784");
+	var names = ["Cult.","Needs A New Name Cult","NOT A Black Marketing Cult","Never Plays Among Us Cult","Matthew Cult?","Organ Collector Cult"];
+	guild.setIcon(`/home/runner/Matthew-Bot/amongus/${dirs[Math.floor(Math.random()*dirs.length)]}`)
+	guild.setName(names[Math.floor(Math.random()*names.length)]).catch((error) => {console.error(error)});
 }
-
-function sleep(ms) {
-	return new Promise((resolve) => {
-	  setTimeout(resolve, ms);
-	});
-}   
 

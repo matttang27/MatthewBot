@@ -5,6 +5,7 @@ const emoji = require('../emojiCharacters.js')
 module.exports = {
 	args: [-1],
 	name: "numguess",
+	type: "games",
 	aliases: ["ng","numberguess","guessthenumber"],
 	description: "Guess the number!",
 	usage: `${prefix}guess <min> <max>`,

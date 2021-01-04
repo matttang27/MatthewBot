@@ -1,9 +1,9 @@
 {
-	"prefix": "m@",
-	"token": "NzYxNjg5MjQ0ODg3NTQ3OTc1.X3eQYw.ecEPt7zG3ylpJzO0XLpdig-opNY",
-	"othertoken": "NzIwNDY2OTYwMTE4MTg2MDE1.XuGZJA.giDb0q8fpAOraV7g2QsI7sUm958",
+	"prefix": "m!",
+	"othertoken": "NzYxNjg5MjQ0ODg3NTQ3OTc1.X3eQYw.ecEPt7zG3ylpJzO0XLpdig-opNY",
+	"token": "NzIwNDY2OTYwMTE4MTg2MDE1.XuGZJA.giDb0q8fpAOraV7g2QsI7sUm958",
 	"ownerID": "576031405037977600",
-	"rpgprefix": "m%",
+	"rpgprefix": "m$",
 	"hourlycd": 60,
 	"dailycd": 1380,
 	"weeklycd": 9360

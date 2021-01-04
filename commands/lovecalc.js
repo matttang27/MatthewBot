@@ -3,8 +3,9 @@ const { prefix, token } = require("../config.json");
 module.exports = {
 	args: [-1],
 	name: "lovecalc",
+	category: "fun",
 	aliases: ["lovecalculator","lc"],
-	description: "Calculates the love between the people specified ~ <3(WIP)",
+	description: "Calculates the love between the people specified ~ cannot be more than 2 (WIP)",
 	usage: `${prefix}lovecalc <person> <1> | <person> <2> (Unlimited number of arguments, seperate the people with a | (Shift+\\)`,
 	example: `${prefix}lovecalc Matthew Tang | Astolfo`,
 	perms: 4,

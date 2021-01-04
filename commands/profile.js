@@ -1,7 +1,7 @@
 const { prefix, token } = require("../config.json");
 const Discord = require('discord.js');
 const fs = require('fs');
-const findMember = require('../functions.js')
+const {findMember} = require('../functions.js')
 
 module.exports = {
 	args: [-1],
@@ -53,12 +53,19 @@ module.exports = {
 		var userNum = message.author.id
 		var target = args[0]
 		if (args.length >= 1) {
+			
 			var member = findMember(message,args)
-			member = await bot.users.fetch(member);
-			if (!member) {
-				return
+			var guildlist = bot.guilds.cache.array()
+			for (i=0;i<guildlist.length;i++) {
+				if (guildlist[i].members.fetch(member) != undefined) {
+					member = await bot.users.fetch(member);
+					break;
+				}
 			}
-			const userRef = db.collection('users').doc(user);
+			if (!member) {
+				return message.reply("Could not find this user in any of Matthew Bot's Servers.")
+			}
+			const userRef = db.collection('users').doc(member.user.id);
 			user = await userRef.get();
 			var userData = user.data()
 			if (!userData) {

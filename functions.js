@@ -1,3 +1,4 @@
+
 function minutesToMessage(minutes) {
 	var days = Math.floor(minutes/1440)
 
@@ -27,6 +28,7 @@ function minutesToMessage(minutes) {
 	return timer
 }
 
+
 function findMember(message,args) {
 	if (args.length >= 1 && message.channel.type == "dm")  {
 		message.reply("You can only search for others inside a guild!")
@@ -35,6 +37,9 @@ function findMember(message,args) {
 
 	if (message.mentions.members.first()) {
 		return message.mentions.members.first().id;
+	}
+	else if (args[0].length == 18 && !isNaN(args[0])) {
+		return args[0]
 	}
 	else {
 		var finder = args.join(" ").toLowerCase()
@@ -86,5 +91,77 @@ function findMember(message,args) {
 			}
 	}
 };
-exports.minutesToMessage = minutesToMessage
-exports.findMember = findMember
+
+function cleanup(str) {
+	//I don't even know man
+  return str.replace(/[^0-9a-z-A-Z ]/g, "").replace(/ +/, " ")
+}
+
+function gameClear(){
+	var g = JSON.parse(fs.readFileSync('../games.json').toString());
+	var games = g.games.filter(myFunction);
+
+	function myFunction(game) {
+		var diff = Date.now() - game.challengetime
+		return Math.floor(diff/60000) < 5
+	}
+	g.games = games
+	let data = JSON.stringify(g,null,2);
+	fs.writeFileSync('../games.json', data);
+}
+
+function changeStatus(bot) {
+	setTimeout(function(){
+		bot.user.setPresence({ activity: { name: 'Everyone must die.' }, status: 'dnd' })
+		.then()
+		.catch(console.error);
+		var message2 = setTimeout(function(){
+			bot.user.setPresence({ activity: { name: 'Everyone must die.' }, status: 'idle' })
+			.then()
+			.catch(console.error);
+			var message3 = setTimeout(function(){
+				bot.user.setPresence({ activity: { name: 'Everyone must die.' }, status: 'online' })
+				.then()
+				.catch(console.error);
+				changeStatus(bot)
+			},10000)
+		}, 10000)
+
+	}, 10000)
+}
+
+function sleep(ms) {
+	return new Promise((resolve) => {
+	  setTimeout(resolve, ms);
+	});
+}   
+
+
+const inputs = [
+	["asdfgergighr"],
+
+	["pog","poggers","pogchamp"],
+
+	["mbot","m-bot","matthewbot","matthew bot"],
+
+	["weirdchamp"]
+]
+const outputs = [
+	["EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEE    EEEE     EEEE    EEEE     EEEE    EEEE     EEEE     EEEE    EEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEE\nEE         EE         EE\nEEEE    EEEE     EEEE\nEE         EE         EE\nEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEE         EE         EE         EE         EE         EE\nEEEE    EEEE     EEEE    EEEE    EEEE     EEEE\nEE         EE         EE         EE         EE         EE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEE\nEE         EE         EE\nEEEE    EEEE     EEEE\nEE         EE         EE\nEEEEEEEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEE    EEEE     EEEE    EEEE     EEEE    EEEE     EEEE     EEEE    EEEE\nEE         EE         EE         EE         EE         EE         EE         EE         EE\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"],
+
+	["That's pretty pog <a:pog:758146624400392212>"],
+	
+	["Did someone say ~~jim~~ **MATTHEW BOT?**"],
+	
+	
+	["True, that is kinda weirdchamp.","https://tenor.com/view/weirdchamping-weirdchamp-twitch-meme-ryan-gutierrez-gif-17202815"]
+]
+
+
+function importAll(sourceScope, targetScope) {
+  for (let name in sourceScope) {
+    targetScope[name] = sourceScope[name];
+  }
+}
+
+module.exports = {minutesToMessage,findMember,cleanup,gameClear,changeStatus,sleep,inputs,outputs,importAll}

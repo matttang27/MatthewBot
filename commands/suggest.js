@@ -5,6 +5,7 @@ const Discord = require('discord.js');
 module.exports = {
 	args: [-1],
 	name: "suggest",
+	category: "bot",
 	description: "Make a suggestion for Matthew Bot!",
 	usage: `${prefix}suggest <stuff>`,
 	perms: 4,
