@@ -18,7 +18,7 @@ var originalLog = console.log;
 
 console.log = function(str){
   originalLog(str);
-  fs.appendFile('fulllog.txt',"\n\n" + new Date() + "\n\n" + JSON.stringify(str), (err) => {
+  fs.appendFile('website/fulllog.txt',"\n\n" + new Date() + "\n\n" + JSON.stringify(str), (err) => {
   	if (err) throw err;
   	
 	});	
@@ -516,7 +516,7 @@ bot.on("messageReactionAdd", async function(reaction,user) {
 })
 
 bot.on("raw", async packet => {
-	if (packet.t == "TYPING_START" || packet.t == "MESSAGE_CREATE") {
+	if (packet.t == "TYPING_START" || packet.t == "MESSAGE_CREATE" || packet.t == "MESSAGE_REACTION_REMOVE") {
 		return
 	}
 	console.log(packet)
@@ -669,3 +669,4 @@ async function nameChange() {
 	guild.setName(names[Math.floor(Math.random()*names.length)]).catch((error) => {console.error(error)});
 }
 
+var humantraffickingicon = setInterval(nameChange(),60000)
