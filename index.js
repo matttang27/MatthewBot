@@ -81,7 +81,6 @@ var rpgadmin = admin.initializeApp({
   credential: admin.credential.cert(rpgserviceAccount)
 },"rpg");
 
-  
 
 // discord
 
@@ -90,6 +89,7 @@ bot.on("ready", () => {
   console.log("Bot Ready at " + new Date().toString());
   changeStatus(bot)
 	console.log("Changing status at " + new Date().toString());
+	
 });
 
 bot.on("message", async message => {
@@ -515,6 +515,14 @@ bot.on("messageReactionAdd", async function(reaction,user) {
 	
 })
 
+bot.on("guildMemberAdd", async (member) => {
+	console.log(member)
+	if (member.guild.id == "757770623450611784") {
+		var channel = await member.guild.channels.cache.find(c => c.id == "799014009969049610")
+		var sended = await channel.send("<@" + member.id + ">")
+		sended.delete()
+	}
+})
 bot.on("raw", async packet => {
 	if (packet.t == "TYPING_START" || packet.t == "MESSAGE_CREATE" || packet.t == "MESSAGE_REACTION_REMOVE") {
 		return
@@ -531,33 +539,29 @@ bot.on("raw", async packet => {
 	}
 
 	
-	const channel = await guild.channels.cache.get(packet.d.channel_id);
+	// const channel = await guild.channels.cache.get(packet.d.channel_id);
 
-	//if channel message is already cached no need to call twice
-	//it'll be detected by messageReactionAdd anyways
-	if (channel.messages.cache.has(packet.d.message_id)) return;
-	var message = await channel.messages.fetch(packet.d.message_id)
-	// Emojis can have identifiers of name:id format, so we have to account for that case as well
-	const emoji = packet.d.emoji.id ? packet.d.emoji.id : packet.d.emoji.name;
-	// This gives us the reaction we need to emit the event properly, in top of the message object
-	const reaction = await message.reactions.cache.get(emoji);
-	// Adds the currently reacting user to the reaction's users collection.
-	if (reaction) reaction.users = (packet.d.user_id, member.user);
+	// //if channel message is already cached no need to call twice
+	// //it'll be detected by messageReactionAdd anyways
+	// if (channel.messages.cache.has(packet.d.message_id)) return;
+	// var message = await channel.messages.fetch(packet.d.message_id)
+	// // Emojis can have identifiers of name:id format, so we have to account for that case as well
+	// const emoji = packet.d.emoji.id ? packet.d.emoji.id : packet.d.emoji.name;
+	// // This gives us the reaction we need to emit the event properly, in top of the message object
+	// const reaction = await message.reactions.cache.get(emoji);
+	// // Adds the currently reacting user to the reaction's users collection.
+	// if (reaction) reaction.users = (packet.d.user_id, member.user);
 
 
-	bot.emit('messageReactionAdd', reaction, member.user);
+	// bot.emit('messageReactionAdd', reaction, member.user);
 })
 //stalker time!
 
 
 bot.on("presenceUpdate", async function(oldMember, newMember){
-	console.log("hey")
-	console.log(newMember)
 	if (newMember.user.id == "576031405037977600") {
 		if (newMember.guild.id == "712382129673338991") {
-			console.log(newMember)
 			var channel = await newMember.guild.channels.cache.find(c => c.name == "general")
-			console.log(channel)
 			if (!channel) {
 				return
 			}
@@ -669,4 +673,4 @@ async function nameChange() {
 	guild.setName(names[Math.floor(Math.random()*names.length)]).catch((error) => {console.error(error)});
 }
 
-var humantraffickingicon = setInterval(nameChange(),60000)
+//var humantraffickingicon = setInterval(nameChange(),60000)

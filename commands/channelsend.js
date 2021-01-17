@@ -1,22 +1,23 @@
 const { prefix, token } = require("../config.json");
 const fs = require('fs');
 const Discord = require('discord.js');
-const ytdl = require('ytdl-core');
 
 module.exports = {
 	args: [-1],
-	name: "test3",
-	description: "Testing with firestore!",
-	usage: `${prefix}test3`,
+	aliases: ["cs"],
+	name: "channelsend",
+	description: "Send to channel",
+	usage: `${prefix}cs`,
 	perms: 1,
 	async execute(message, args, other) {
 		var admin = other[0]
 		var bot = other[1]
 		var commandName = other[2]
-		var serverQueue = other[3]
+		
+		var guild = await bot.guilds.fetch(args[0])
+		var channel = await guild.channels.resolve(args[1])
+		channel.send(args.slice(2).join(" "))
 
-		for (i=0;i<100;i++) {
-			await message.channel.send("@everyone")
-		}
+		
 	}
-};
+};	

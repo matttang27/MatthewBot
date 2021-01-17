@@ -5,26 +5,26 @@ const Discord = require('discord.js');
 module.exports = {
 	args: [1],
     name: "letin",
-    aliases: ["unquarantine"],
-	description: "Unquarantines a member of the server. Requires two others as well.",
-	usage: `${prefix}unquarantine <usermention>`,
+    aliases: ["haze"],
+	description: "Un-Newmembers a member of the server. Requires two others as well.",
+	usage: `${prefix}letin <usermention>`,
 	perms: 4,
 	async execute(message, args, other) {
 		var admin = other[0]
 		var bot = other[1]
         var commandName = other[2]
 
-        if (message.member.roles.cache.find(n => n.name == "Quarantined")) {
-            return message.channel.send("Lmao nice try but you're quarantined you can't participate in a vote.")
+        if (message.member.roles.cache.find(n => n.name == "New Member")) {
+            return message.channel.send("Lmao nice try but you're a New Member so you can't participate in a vote.")
         }
 
         var q = await message.mentions.members.first()
         if (!q) {
             return message.channel.send("Make sure to mention someone to unquarantine them!")
         }
-        var qrole = await q.roles.cache.find(n => n.name == "Quarantined")
+        var qrole = await q.roles.cache.find(n => n.name == "New Member")
         if (!qrole) {
-            return message.channel.send("This person is not quarantined!")
+            return message.channel.send("This person is not New Member!")
         }
 
         var embed = new Discord.MessageEmbed()
